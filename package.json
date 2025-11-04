@@ -1,0 +1,23 @@
+{
+  "name": "backend-doctor",
+  "version": "1.0.0",
+  "description": "The back-end project of the medical doctor on the website of Rast China, a fully professional WordPress template of the medical doctor",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/mahmoodCod/backend-doctor.git"
+  },
+  "keywords": [],
+  "author": "",
+  "type": "commonjs",
+  "bugs": {
+    "url": "https://github.com/mahmoodCod/backend-doctor/issues"
+  },
+  "homepage": "https://github.com/mahmoodCod/backend-doctor#readme",
+  "dependencies": {
+    "express": "^5.1.0"
+  }
+}
