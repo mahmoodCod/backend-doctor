@@ -1,13 +1,12 @@
 const { errorResponse } = require("../../helpers/response");
 const { registerValidator } = require("../../validators/auth");
 const userModel = require('../../models/User');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
 
 exports.register = async (req,res,next) => {
     try {
-        const registerResult = registerValidator(req.body);
-        if (registerResult !== true) {
-            return errorResponse(req,422, registerResult);
-        };
+        await registerValidator.validate(req.body,{ abortEarly: false });
 
         const { email, password } = req.body;
 
