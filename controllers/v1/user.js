@@ -115,6 +115,19 @@ exports.banUser = async(req,res,next) => {
 
 exports.getDoctors = async (req,res,next) => {
     try {
+        const doctors = await User.find({ role: 'DOCTOR', isBanned: false })
+        .select('-password -__v')
+        .populate('doctorInfo.category', 'title slug')
+        .lean();
+
+        if (!doctors.length) {
+            return errorResponse(res, 404, 'No doctors found!');
+        }
+
+        return successResponse(res, 200, {
+            count: doctors.length,
+            doctors,
+        });
 
     } catch (err) {
         next(err);
