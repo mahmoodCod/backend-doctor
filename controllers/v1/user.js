@@ -95,7 +95,7 @@ exports.banUser = async(req,res,next) => {
             return errorResponse(res,404, "User not found");
         };
 
-        if (user.roles.includes("ADMIN")) {
+        if (user.role.includes("ADMIN")) {
             return errorResponse(res, 403, "You cannot ban an admin !!");
         };
 
