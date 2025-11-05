@@ -2,6 +2,8 @@ const { successResponse, errorResponse } = require('../../helpers/response');
 const User = require('../../models/User');
 const { createPaginationData } = require('../../utils');
 const Ban = require('../../models/Ban');
+const bcrypt = require('bcrypt');
+const userModel = require('../../models/User');
 exports.getAll = async(req,res,next) => {
     try {
         let { page = 1, limit = 10 } = req.query;
@@ -21,6 +23,23 @@ exports.getAll = async(req,res,next) => {
 
 exports.updateUser = async(req,res,next) => {
     try {
+        const { email, password } = req.body;
+
+    const updateData = {};
+
+    if (email) updateData.email = email;
+
+    if (password) {
+      updateData.password = await bcrypt.hash(password, 10);
+    }
+
+    const user = await userModel.findByIdAndUpdate(
+      req.user._id,
+      updateData,
+      { new: true }
+    ).select('-password').lean();
+
+    return successResponse(res, 200, { user });
 
     } catch (err) {
         next(err);
