@@ -1,6 +1,7 @@
 const express = require('express');
 const { auth } = require('../../middlewares/auth');
 const roleGuard = require('../../middlewares/roleGuard');
+const { getAll, updateUser, changeRole, banUser } = require('../../controllers/v1/user');
 
 const router = express.Router();
 
