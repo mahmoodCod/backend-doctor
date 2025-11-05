@@ -3,7 +3,6 @@ const { registerValidator, loginValidator } = require("../../validators/auth");
 const userModel = require('../../models/User');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
-const { isValidObjectId } = require("mongoose");
 
 exports.register = async (req,res,next) => {
     try {
