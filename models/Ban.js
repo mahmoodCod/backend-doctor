@@ -6,7 +6,7 @@ const banSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-});
+}, { timestamps: true });
 
 const model = mongoose.model("Ban", banSchema);
 
