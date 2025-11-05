@@ -95,7 +95,7 @@ exports.banUser = async(req,res,next) => {
             return errorResponse(res,404, "User not found");
         };
 
-        if (user.role.includes("ADMIN")) {
+        if (user.role === 'ADMIN') {
             return errorResponse(res, 403, "You cannot ban an admin !!");
         };
 
@@ -117,7 +117,7 @@ exports.getDoctors = async (req,res,next) => {
     try {
         const doctors = await User.find({ role: 'DOCTOR', isBanned: false })
         .select('-password -__v')
-        .populate('doctorInfo.category', 'title slug')
+        .populate('category', 'title slug')
         .lean();
 
         if (!doctors.length) {
@@ -136,6 +136,48 @@ exports.getDoctors = async (req,res,next) => {
 
 exports.updateDoctorInfo = async (req,res,next) => {
     try {
+        if (req.user.role !== 'DOCTOR') {
+            return errorResponse(res, 403, 'Only doctors can update their info!');
+        }
+      
+        const {
+            fullname,
+            phone,
+            address,
+            city,
+            province,
+            bio,
+            experience,
+            price,
+            category,
+            visitStatus,
+            workTimes,
+        } = req.body;
+      
+        const updateData = {
+            fullname,
+            phone,
+            address,
+            city,
+            province,
+            bio,
+            experience,
+            price,
+            category,
+            visitStatus,
+            workTimes,
+        };
+      
+        const updatedDoctor = await User.findByIdAndUpdate(
+            req.user._id,
+            { $set: updateData },
+            { new: true }
+        ).select('-password');
+      
+        return successResponse(res, 200, {
+            message: 'Doctor profile updated successfully!',
+            doctor: updatedDoctor,
+        });
 
     } catch (err) {
         next(err);
