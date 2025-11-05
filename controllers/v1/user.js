@@ -4,6 +4,7 @@ const { createPaginationData } = require('../../utils');
 const Ban = require('../../models/Ban');
 const bcrypt = require('bcrypt');
 const userModel = require('../../models/User');
+const { isValidObjectId } = require('mongoose');
 exports.getAll = async(req,res,next) => {
     try {
         let { page = 1, limit = 10 } = req.query;
@@ -48,6 +49,29 @@ exports.updateUser = async(req,res,next) => {
 
 exports.changeRole = async(req,res,next) => {
     try {
+        const { userId } = req.params;
+
+        if (!isValidObjectId(userId)) {
+            return errorResponse(res, 409, "User ID is not valid!");
+        }
+
+        const user = await userModel.findById(userId);
+            if (!user) {
+            return errorResponse(res, 404, "User not found!");
+        }
+
+        const newRole = user.roles === 'ADMIN' ? 'USER' : 'ADMIN';
+
+        const updatedUser = await userModel.findByIdAndUpdate(
+            userId,
+            { roles: newRole },
+            { new: true }
+        ).select('-password');
+
+        return successResponse(res, 200, {
+            user: updatedUser,
+            message: `User role changed successfully to ${newRole}`,
+        });
 
     } catch (err) {
         next(err);
