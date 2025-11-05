@@ -50,29 +50,37 @@ exports.updateUser = async(req,res,next) => {
 exports.changeRole = async(req,res,next) => {
     try {
         const { userId } = req.params;
+        const { role } = req.body;
 
         if (!isValidObjectId(userId)) {
-            return errorResponse(res, 409, "User ID is not valid!");
+          return errorResponse(res, 409, 'User ID is not valid!');
         }
 
-        const user = await userModel.findById(userId);
-            if (!user) {
-            return errorResponse(res, 404, "User not found!");
+        const validRoles = ['USER', 'DOCTOR', 'ADMIN'];
+        if (!validRoles.includes(role)) {
+          return errorResponse(res, 400, 'Invalid role type!');
         }
 
-        const newRole = user.roles === 'ADMIN' ? 'USER' : 'ADMIN';
+        const user = await User.findById(userId);
+        if (!user) {
+          return errorResponse(res, 404, 'User not found!');
+        }
 
-        const updatedUser = await userModel.findByIdAndUpdate(
-            userId,
-            { roles: newRole },
-            { new: true }
-        ).select('-password');
+        if (user.role === 'ADMIN' && req.user._id.toString() === user._id.toString()) {
+          return errorResponse(res, 403, 'You cannot change your own role!');
+        }
+
+        user.role = role;
+        await user.save();
 
         return successResponse(res, 200, {
-            user: updatedUser,
-            message: `User role changed successfully to ${newRole}`,
+          user: {
+            _id: user._id,
+            email: user.email,
+            role: user.role,
+          },
+          message: `User role changed successfully to ${role}`,
         });
-
     } catch (err) {
         next(err);
     };
@@ -99,6 +107,22 @@ exports.banUser = async(req,res,next) => {
             user : deleteUser,
             message: "User banned successfully, user and posts removed",
         });
+
+    } catch (err) {
+        next(err);
+    };
+};
+
+exports.getDoctors = async (req,res,next) => {
+    try {
+
+    } catch (err) {
+        next(err);
+    };
+};
+
+exports.updateDoctorInfo = async (req,res,next) => {
+    try {
 
     } catch (err) {
         next(err);
