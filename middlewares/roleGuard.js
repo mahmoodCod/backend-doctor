@@ -1,4 +1,4 @@
-const { errorResponse } = require("../helpers/respanses");
+const { errorResponse } = require("../helpers/response");
 
 module.exports = (role) => {
     return async(req,res,next) => {
