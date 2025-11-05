@@ -4,7 +4,7 @@ const { errorResponse } = require('../helpers/response');
 
 exports.auth = async (req,res,next) => {
     try {
-        const token = req.headers.authrization;
+        const token = req.headers.authorization;
 
         if (!token) {
             return errorResponse(res, 401, "Token not provided!");
@@ -13,7 +13,7 @@ exports.auth = async (req,res,next) => {
         const tokenArray = token.split(" ");
         const tokenValue = tokenArray[1];
 
-        if (tokenArray[0] === "Bearer") {
+        if (tokenArray[0] !== "Bearer") {
             return errorResponse(
                 res,401, "Write [Bearer ] at the start ot the token"
             );
@@ -30,7 +30,7 @@ exports.auth = async (req,res,next) => {
             return errorResponse(res, 401, "Token is not valid !!");
         };
 
-        const userId = decoded.userId;
+        const userId = decoded.id;
 
         const user = await User.findOne({ _id: userId });
 

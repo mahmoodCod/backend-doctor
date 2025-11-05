@@ -12,13 +12,13 @@ const registerValidator = yup.object({
 });
 
 const loginValidator = yup.object({
-    login: yup
+  identifir: yup
     .string()
     .required('Username or email is required')
     .test('is-valid', 'Must be a valid email or username', value => {
       if (!value) return false;
 
-      const isEmail = /[^@ \t\r\n]+@[^@ \t\r\n]+\.[^@ \t\r\n]+/.test(value);
+      const isEmail = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
       const isUsername = value.length >= 3;
 
       return isEmail || isUsername;
