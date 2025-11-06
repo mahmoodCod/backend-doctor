@@ -115,7 +115,7 @@ exports.banUser = async(req,res,next) => {
 
 exports.getDoctors = async (req,res,next) => {
     try {
-        const doctors = await User.find({ role: 'DOCTOR', isBanned: false })
+        const doctors = await User.find({ role: 'DOCTOR', 'doctorInfo.visitStatus': true , isBanned: false })
         .select('-password -__v')
         .populate('doctorInfo.category', 'title slug')
         .lean();
@@ -138,7 +138,7 @@ exports.updateDoctorInfo = async (req,res,next) => {
     try {
         if (req.user.role !== 'DOCTOR') {
             return errorResponse(res, 403, 'Only doctors can update their info!');
-        }
+        };
       
         const {
             fullname,
@@ -150,29 +150,30 @@ exports.updateDoctorInfo = async (req,res,next) => {
             experience,
             price,
             category,
-            visitStatus,
             workTimes,
         } = req.body;
       
         const updateData = {
-            fullname,
-            phone,
-            address,
-            city,
-            province,
-            bio,
-            experience,
-            price,
-            category,
-            visitStatus,
-            workTimes,
+            'doctorInfo.fullname': fullname,
+            'doctorInfo.phone': phone,
+            'doctorInfo.address': address,
+            'doctorInfo.city': city,
+            'doctorInfo.province': province,
+            'doctorInfo.bio': bio,
+            'doctorInfo.experience': experience,
+            'doctorInfo.price': price,
+            'doctorInfo.category': category,
+            'doctorInfo.workTimes': workTimes,
+            'doctorInfo.visitStatus': true,
         };
       
         const updatedDoctor = await User.findByIdAndUpdate(
             req.user._id,
             { $set: updateData },
             { new: true }
-        ).select('-password');
+        )
+            .select('-password')
+            .populate('doctorInfo.category', 'title slug');
       
         return successResponse(res, 200, {
             message: 'Doctor profile updated successfully!',

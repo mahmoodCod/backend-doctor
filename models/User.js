@@ -45,7 +45,7 @@ const doctorInfoSchema = new mongoose.Schema({
     },
     visitStatus: { 
         type: Boolean, 
-        default: true, 
+        default: false, 
     },
     category: { 
         type: mongoose.Schema.Types.ObjectId, 
@@ -90,7 +90,7 @@ const userSchema = new mongoose.Schema({
         type: doctorInfoSchema,
         default: {},
     },
-});
+}, { timestamps: true });
 
 // Hash password before save
     userSchema.pre('save', async function (next) {
