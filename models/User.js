@@ -5,33 +5,33 @@ const doctorInfoSchema = new mongoose.Schema({
     fullname: {
         type: String,
         trim: true,
-        required: true,
+        // required: true,
     },
     slug: {
         type: String,
         trim: true,
-        unique: true,
-        required: true,
+        unique: true
+        // required: true,
     },
     phone: {
         type: String,
         trim: true,
-        required: true,
+        // required: true,
     },
     address: { 
         type: String,
         trim: true,
-        required: true, 
+        // required: true, 
     },
     city: {
         type: String, 
         trim: true,
-        required: true,
+        // required: true,
     },
     province: { 
         type: String, 
         trim: true,
-        required: true,
+        // required: true,
     },
     bio: { 
         type: String, 
@@ -40,26 +40,25 @@ const doctorInfoSchema = new mongoose.Schema({
     experience: { 
         type: Number, 
         default: 0,
-        required: true, 
+        // required: true, 
     },
     price: { 
         type: Number, 
         default: 0,
-        required: true, 
+        // required: true, 
     },
     rating: { 
         type: Number, 
         default: 0,
-        required: true, 
+        // required: true, 
     },
     visitStatus: { 
         type: Boolean, 
         default: false, 
     },
-    category: { 
+    category: {
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'Category',
-        required: true,
     },
     avatar: {
       filename: { type: String, },

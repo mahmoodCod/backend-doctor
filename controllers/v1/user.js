@@ -136,6 +136,7 @@ exports.getDoctors = async (req,res,next) => {
 
 exports.updateDoctorInfo = async (req,res,next) => {
     try {
+
         if (req.user.role !== 'DOCTOR') {
             return errorResponse(res, 403, 'Only doctors can update their info!');
         };
@@ -166,7 +167,6 @@ exports.updateDoctorInfo = async (req,res,next) => {
             'doctorInfo.workTimes': workTimes,
             'doctorInfo.visitStatus': true,
         };
-      
         const updatedDoctor = await User.findByIdAndUpdate(
             req.user._id,
             { $set: updateData },
