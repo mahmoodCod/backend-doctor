@@ -1,28 +1,7 @@
 const { default: mongoose } = require("mongoose");
+const bcrypt = require('bcrypt');
 
-const userSchema = new mongoose.Schema({
-    email: {
-        type: String,
-        required: true,
-        unique: true,
-    },
-    role: {
-        type: String,
-        enum: ['ADMIN','USER', 'DOCTOR'],
-        default: 'USER',
-    },
-    password: {
-        type: String,
-        required: true,
-    },
-    isBanned: {
-        type: Boolean,
-        default: false,
-    },
-
-    // Movies for doctors
-
-    doctorInfo: {
+const doctorInfoSchema = new mongoose.Schema({
     fullname: {
         type: String,
         trim: true,
@@ -86,9 +65,32 @@ const userSchema = new mongoose.Schema({
       ],
       default: [],
     },
-    },
+});
 
-}, { timestamps: true });
+const userSchema = new mongoose.Schema({
+    email: {
+        type: String,
+        required: true,
+        unique: true,
+    },
+    role: {
+        type: String,
+        enum: ['ADMIN','USER', 'DOCTOR'],
+        default: 'USER',
+    },
+    password: {
+        type: String,
+        required: true,
+    },
+    isBanned: {
+        type: Boolean,
+        default: false,
+    },
+    doctorInfo: {
+        type: doctorInfoSchema,
+        default: {},
+    },
+});
 
 // Hash password before save
     userSchema.pre('save', async function (next) {

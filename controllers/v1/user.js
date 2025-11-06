@@ -54,7 +54,7 @@ exports.changeRole = async(req,res,next) => {
 
         if (!isValidObjectId(userId)) {
           return errorResponse(res, 409, 'User ID is not valid!');
-        }
+        };
 
         const validRoles = ['USER', 'DOCTOR', 'ADMIN'];
         if (!validRoles.includes(role)) {
@@ -117,7 +117,7 @@ exports.getDoctors = async (req,res,next) => {
     try {
         const doctors = await User.find({ role: 'DOCTOR', isBanned: false })
         .select('-password -__v')
-        .populate('category', 'title slug')
+        .populate('doctorInfo.category', 'title slug')
         .lean();
 
         if (!doctors.length) {
