@@ -57,6 +57,39 @@ exports.createCategory = async (req,res,next) => {
 
 exports.getAll = async (req,res,next) => {
     try {
+        const { page = 1, limit = 10, search = '', sort = 'createdAt', order = 'desc', parent = null } = req.query;
+
+        const query = {};
+
+        if(search) {
+            query.$or = [
+                { title: { $regex: search, $options: "i" } },
+                { description: { $regex: search, $options: "i" } },
+            ]
+        };
+
+        if(parent) {
+            query.parent = parent === 'null' ? null : parent;
+        };
+
+        const skip = (parseInt(page) - 1) * parseInt(limit);
+
+        const categories = await Category.find(query)
+            .sort({ [sort]: order === "desc" ? -1 : 1 })
+            .skip(skip)
+            .limit(parseInt(limit))
+            .populate("parent", "title slug")
+            .lean();
+
+        const total = await Category.countDocuments(query);
+
+        return successResponse(res, 200, {
+            total,
+            page: parseInt(page),
+            pages: Math.ceil(total / parseInt(limit)),
+            count: categories.length,
+            categories,
+    });
 
     } catch (err) {
         next(err);
