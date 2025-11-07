@@ -96,13 +96,36 @@ const categoryValidator = yup.object({
     .optional(),
 });
 
-const categoryUpdateValidator = categoryValidator.shape({
-    title: categoryValidator.fields.title.optional(),
-    slug: categoryValidator.fields.slug.optional(),
-    description: categoryValidator.fields.description.optional(),
-    parent: categoryValidator.fields.parent.optional(),
-    icon: categoryValidator.fields.icon.optional(),
-    fillters: categoryValidator.fields.fillters.optional(),
+const categoryUpdateValidator = yup.object({
+    title: yup.string().trim().max(255).optional(),
+  slug: yup
+    .string()
+    .trim()
+    .matches(/^[a-z0-9_-]+$/)
+    .max(255)
+    .optional(),
+  parent: yup
+    .string()
+    .nullable()
+    .matches(/^[0-9a-f]{24}$/)
+    .optional(),
+  description: yup.string().trim().max(500).optional(),
+  icon: yup
+    .object({
+      filename: yup
+        .string()
+        .trim()
+        .matches(/\.(png|jpg|jpeg|svg)$/i)
+        .optional(),
+      path: yup
+        .string()
+        .trim()
+        .matches(/^(https?:\/\/|\/uploads\/)/)
+        .optional(),
+    })
+    .nullable()
+    .optional(),
+  fillters: yup.array().of(filterSchemaValidator).optional(),
 });
 
 module.exports = {

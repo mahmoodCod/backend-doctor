@@ -3,6 +3,7 @@ const path = require('path');
 
 const authRouter = require('./routes/v1/auth');
 const userRouter = require('./routes/v1/user');
+const categoryRouter = require('./routes/v1/Category');
 
 const app = express();
 app.use(express.static(path.join(__dirname, "public")));
@@ -13,6 +14,7 @@ app.use(express.json({ limits: "30mb" }));
 // Routers
 app.use('/api/v1/auth', authRouter);
 app.use('/api/v1/users', userRouter);
+app.use('/api/v1/category', categoryRouter);
 
 
 app.use((req,res) => {
