@@ -12,8 +12,8 @@ const supportsFormat = [
 ]
 exports.createCategory = async (req,res,next) => {
     try {
-        let = { title, slug, parent, description, fillters } = req.body;
-        fillters = JSON.parse(fillters);
+        let { title, slug, parent, description, fillters } = req.body;
+        // fillters = JSON.parse(fillters);
 
         await categoryValidator.validate({
             title,
@@ -44,7 +44,7 @@ exports.createCategory = async (req,res,next) => {
             slug,
             fillters,
             icon
-        })
+        });
 
         return successResponse(res,200, {
             category: newCategory,
