@@ -16,7 +16,7 @@ const filterSchema = new mongoose.Schema({
         type: String,
         trim: true,
     },
-    type: {
+    types: {
         type: String,
         enum: [ "radio", "selectbox", "range" ],
         required: true,

@@ -1,54 +1,49 @@
 const yup =  require('yup');
 
-const filterSchemaValidator = yup.object({
-    name: yup
+const fillterSchemaValidator = yup.object({
+  name: yup
     .string()
-    .required("Filter name is required")
+    .required("Fillter name is required")
     .trim()
-    .max(255, "Filter name cannot exceed 255 characters"),
+    .max(255, "Fillter name cannot exceed 255 characters"),
 
   slug: yup
     .string()
-    .required("Filter slug is required")
+    .required("Fillter slug is required")
     .trim()
     .matches(
       /^[a-z0-9_-]+$/,
       "Filter slug can only contain lowercase letters(a-z), numbers(0-9), underscore (_), and hyphens (-)"
     )
-    .max(255, "Filter slug cannot exceed 255 characters"),
+    .max(255, "Fillter slug cannot exceed 255 characters"),
 
   description: yup
     .string()
     .trim()
-    .max(500, "Filter description cannot exceed 500 characters")
-    .optional(),
+    .max(500, "Filter description cannot exceed 500 characters"),
 
-  type: yup
+  types: yup
     .string()
-    .required("Filter type is required")
-    .oneOf(["radio", "selectbox"], "Invalid filter type"),
+    .required("Fillter type is required")
+    .oneOf(["radio", "selectbox", "range"], "Invalid filter types"),
 
   options: yup
     .array()
     .of(yup.string().trim())
-    .when("type", {
+    .when("types", {
       is: (val) => ["radio", "selectbox"].includes(val),
       then: (schema) =>
         schema.min(1, "At least one option is required for this filter type"),
-    })
-    .optional(),
+    }),
 
-  min: yup
-    .number()
-    .nullable()
-    .typeError("min must be a number")
-    .optional(),
-
-  max: yup
-    .number()
-    .nullable()
-    .typeError("max must be a number")
-    .optional(),
+    min: yup.number().when("types", {
+      is: "range",
+      then: () => yup.number().required("Number field requires a minimum value"),
+    }),
+    max: yup.number().when("types", {
+      is: "range",
+      then: () => yup.number().required("Number field requires a maximum value"),
+    }),
 });
 
 const categoryValidator = yup.object({
@@ -56,7 +51,7 @@ const categoryValidator = yup.object({
     .string()
     .required(" Category title is required ")
     .trim()
-    .max(255, " Category title connact excced 255 characters "),
+    .max(255, " Category title cannot exceed 255 characters "),
     slug: yup
     .string()
     .required(" Category slug is required ")
@@ -65,71 +60,61 @@ const categoryValidator = yup.object({
         /^[a-z0-9_-]+$/,
         "Slug can only contain lowercase letters(a-z), numbers(0-9),underscore (_), and hyphens (-)"
     )
-    .max(255, " Category slug connact excced 255 characters "),
+    .max(255, " Category slug cannot exceed 255 characters "),
     parent: yup
     .string()
-    .nullable()
     .matches(/^[0-9a-f]{24}$/, "Invalid parent category ID format")
-    .optional(),
+    .nullable(),
     description: yup
     .string()
     .trim()
-    .max(500, "Category description cannot exceed 500 characters")
-    .optional(),
+    .max(500, "Category description cannot exceed 500 characters"),
     icon: yup
      .object({
       filename: yup
         .string()
         .trim()
-        .matches(/\.(png|jpg|jpeg|svg)$/i, "Icon filename must be an image file (.png, .jpg, .jpeg, .svg)")
-        .optional(),
-    path: yup
+        .matches(/\.(png|jpg|jpeg|svg)$/i, "Icon filename must be an image file (.png, .jpg, .jpeg, .svg)"),
+      path: yup
         .string()
         .trim()
         .matches(
           /^(https?:\/\/|\/uploads\/)/,
           "Invalid icon path! Path must start with http:// or /uploads/"
-        )
-        .optional(),
+        ),
     })
-    .nullable()
-    .optional(),
+    .nullable(),
+    fillters: yup.array().of(fillterSchemaValidator).nullable(),
 });
 
 const categoryUpdateValidator = yup.object({
-  title: yup.string().trim().max(255).optional(),
+  title: yup
+  .string()
+  .trim(),
   slug: yup
     .string()
     .trim()
-    .matches(/^[a-z0-9_-]+$/)
-    .max(255)
-    .optional(),
+    .matches(/^[a-z0-9_-]+$/),
   parent: yup
     .string()
-    .nullable()
-    .matches(/^[0-9a-f]{24}$/)
-    .optional(),
-  description: yup.string().trim().max(500).optional(),
+    .matches(/^[0-9a-f]{24}$/),
+  description: yup.string().trim().max(500),
   icon: yup
     .object({
       filename: yup
         .string()
         .trim()
-        .matches(/\.(png|jpg|jpeg|svg)$/i)
-        .optional(),
+        .matches(/\.(png|jpg|jpeg|svg)$/i),
       path: yup
         .string()
         .trim()
-        .matches(/^(https?:\/\/|\/uploads\/)/)
-        .optional(),
-    })
-    .nullable()
-    .optional(),
-  fillters: yup.array().of(filterSchemaValidator).optional(),
+        .matches(/^(https?:\/\/|\/uploads\/)/),
+    }),
+  fillters: yup.array().of(fillterSchemaValidator),
 });
 
 module.exports = {
     categoryValidator,
-    filterSchemaValidator,
+    fillterSchemaValidator,
     categoryUpdateValidator
 };
