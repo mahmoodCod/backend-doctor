@@ -11,7 +11,7 @@ const router = express.Router();
 router.route('/').post(auth, roleGuard('ADMIN'), upload.single('icon'), createCategory)
 .get(auth, roleGuard('ADMIN'), getAll);
 
-router.route('/category/:categoryId').patch(auth, roleGuard('ADMIN'), upload.single('icon'), updateCategory)
+router.route('/:categoryId').patch(auth, roleGuard('ADMIN'), upload.single('icon'), updateCategory)
 .delete(auth, roleGuard('ADMIN'), removeCategory);
 
 module.exports = router;

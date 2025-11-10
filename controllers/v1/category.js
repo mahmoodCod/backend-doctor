@@ -1,6 +1,7 @@
-const { categoryValidator } = require("../../validators/category");
+const { categoryValidator, categoryUpdateValidator } = require("../../validators/category");
 const Category = require('../../models/Category');
 const { successResponse, errorResponse } = require("../../helpers/response");
+const { isValidObjectId } = require("mongoose");
 
 const supportsFormat = [
     "image/jpeg",
@@ -98,6 +99,51 @@ exports.getAll = async (req,res,next) => {
 
 exports.updateCategory = async (req,res,next) => {
     try {
+        const { categoryId } = req.params;
+
+        if (!isValidObjectId(categoryId)) {
+            return errorResponse(res,404, 'Category id is not valid !!');
+        };
+
+        let { title, slug, parent, description, fillters } = req.body;
+
+        await categoryUpdateValidator.validate({
+            title,
+            slug,
+            parent,
+            description,
+            fillters
+        }, { abortEarly: false });
+
+        let icon = {};
+
+        if (req.file) {
+            const { filename, mimetype } = req.file;
+    
+            if(!supportsFormat.includes(mimetype)) {
+                return errorResponse(res,400, 'Unsopported image format !!');
+            };
+    
+            icon = {
+                filename,
+                path: `images/category-icons/${filename}`,
+            };
+        };
+
+        const updatedCategory = await Category.findByIdAndUpdate(categoryId, {
+            title,
+            parent,
+            slug,
+            description,
+            fillters,
+            icon,
+        }, { new: true });
+    
+        if (!updatedCategory) {
+            return errorResponse(res,404, 'Category not found !!');
+        };
+    
+        return successResponse(res,200, { category: updatedCategory});
 
     } catch (err) {
         next(err);

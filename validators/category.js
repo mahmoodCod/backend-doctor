@@ -97,7 +97,7 @@ const categoryValidator = yup.object({
 });
 
 const categoryUpdateValidator = yup.object({
-    title: yup.string().trim().max(255).optional(),
+  title: yup.string().trim().max(255).optional(),
   slug: yup
     .string()
     .trim()
