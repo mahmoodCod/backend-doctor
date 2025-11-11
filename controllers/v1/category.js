@@ -152,6 +152,22 @@ exports.updateCategory = async (req,res,next) => {
 
 exports.removeCategory = async (req,res,next) => {
     try {
+        const { categoryId } = req.params;
+
+        if(!isValidObjectId(categoryId)) {
+            return errorResponse(res,404, "Category id is not valid !!");
+        };
+
+        const deletedCategory = await Category.findByIdAndDelete(categoryId);
+
+        if(!deletedCategory) {
+            return errorResponse(res,404, "Category not found !!");
+        };
+
+        return successResponse(res,200, {
+            category: deletedCategory,
+            message: "Category removed successfully :))",
+        });
 
     } catch (err) {
         next(err);
