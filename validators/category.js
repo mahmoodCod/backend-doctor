@@ -3,13 +3,13 @@ const yup =  require('yup');
 const fillterSchemaValidator = yup.object({
   name: yup
     .string()
-    .required("Fillter name is required")
+    // .required("Fillter name is required")
     .trim()
     .max(255, "Fillter name cannot exceed 255 characters"),
 
   slug: yup
     .string()
-    .required("Fillter slug is required")
+    // .required("Fillter slug is required")
     .trim()
     .matches(
       /^[a-z0-9_-]+$/,
@@ -22,25 +22,25 @@ const fillterSchemaValidator = yup.object({
     .trim()
     .max(500, "Filter description cannot exceed 500 characters"),
 
-  types: yup
+  type: yup
     .string()
-    .required("Fillter type is required")
+    // .required("Fillter type is required")
     .oneOf(["radio", "selectbox", "range"], "Invalid filter types"),
 
   options: yup
     .array()
     .of(yup.string().trim())
-    .when("types", {
+    .when("type", {
       is: (val) => ["radio", "selectbox"].includes(val),
       then: (schema) =>
         schema.min(1, "At least one option is required for this filter type"),
     }),
 
-    min: yup.number().when("types", {
+    min: yup.number().when("type", {
       is: "range",
       then: () => yup.number().required("Number field requires a minimum value"),
     }),
-    max: yup.number().when("types", {
+    max: yup.number().when("type", {
       is: "range",
       then: () => yup.number().required("Number field requires a maximum value"),
     }),
@@ -94,10 +94,10 @@ const categoryUpdateValidator = yup.object({
   slug: yup
     .string()
     .trim()
-    .matches(/^[a-z0-9_-]+$/),
+    .matches(/^[a-z0-9_-]+$/, "Slug can only contain lowercase letters(a-z), numbers(0-9),underscore (_), and hyphens (-)"),
   parent: yup
     .string()
-    .matches(/^[0-9a-f]{24}$/),
+    .matches(/^[0-9a-f]{24}$/ ,"Invalid parent category ID format"),
   description: yup.string().trim().max(500),
   icon: yup
     .object({
